@@ -5,7 +5,7 @@ Resources:
 FrontendS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: my-library-frontend-bucket-sheshan-hebron
+      BucketName: newbucket
       WebsiteConfiguration:
         IndexDocument: index.html
 
@@ -13,10 +13,12 @@ FrontendS3Bucket:
   CloudWatchLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: /bidding-app/logs
+      LogGroupName: /the_app/logs
       RetentionInDays: 30
 
 Outputs:
   CloudWatchLogGroup:
     Description: "CloudWatch Log Group Name"
     Value: !Ref CloudWatchLogGroup
+
+    
