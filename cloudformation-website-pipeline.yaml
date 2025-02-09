@@ -4,6 +4,20 @@ Description: CloudFormation Template for CloudWatch Logs.
 Resources:
   FrontendS3Bucket:
     Type: AWS::S3::Bucket
+
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: MyTable
+      AttributeDefinitions:
+        - AttributeName: "ID"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "ID"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
     
   # CloudWatch Log Group
   CloudWatchLogGroup:
