@@ -2,7 +2,8 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: CloudFormation Template for CloudWatch Logs.
     
 Resources:
-  
+  FrontendS3Bucket:
+    Type: AWS::S3::Bucket
 
   # CloudWatch Log Group
   CloudWatchLogGroup:
