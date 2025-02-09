@@ -29,4 +29,9 @@ Outputs:
   CloudWatchLogGroup:
     Description: "CloudWatch Log Group Name"
     Value: !Ref CloudWatchLogGroup
+#dynamodb comment
+  DynamoDBTableName:
+    Description: "DynamoDB Table Name"
+    Value: !Ref DynamoDBTable
+
 
