@@ -1,0 +1,15 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation Template for CloudWatch Logs.
+
+Resources:
+  # CloudWatch Log Group
+  CloudWatchLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /bidding-app/logs
+      RetentionInDays: 30
+
+Outputs:
+  CloudWatchLogGroup:
+    Description: "CloudWatch Log Group Name"
+    Value: !Ref CloudWatchLogGroup
