@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: CloudFormation Template for CloudWatch Logs.
 
 Resources:
-FrontendS3Bucket:
+  FrontendS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: newbucket
@@ -20,5 +20,3 @@ Outputs:
   CloudWatchLogGroup:
     Description: "CloudWatch Log Group Name"
     Value: !Ref CloudWatchLogGroup
-
-    
