@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: CloudFormation Template for CloudWatch Logs.
-    
+
 Resources:
   FrontendS3Bucket:
     Type: AWS::S3::Bucket
@@ -26,34 +26,35 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
 
- LoadBalancer:
+  LoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       Subnets:
         - subnet-03c1c466698b3a209
       SecurityGroups:
-        - sg-03c89b66ae30cc15b  
-        
-LaunchTemplate:
+        - sg-03c89b66ae30cc15b
+
+  LaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
     Properties:
       LaunchTemplateName: MyLaunchTemplate
-      ImageId: ami-0abcdef1234567890
-      InstanceType: t2.micro
-      SecurityGroupIds:
-        - sg-0123456789abcdef0
-      UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash
-          echo "Hello, World!" > /tmp/hello.txt
-          
-TargetGroup:
+      LaunchTemplateData:
+        ImageId: ami-0abcdef1234567890  # Replace with your AMI ID
+        InstanceType: t2.micro
+        SecurityGroupIds:
+          - sg-0123456789abcdef0  # Replace with your Security Group ID
+        UserData:
+          Fn::Base64: !Sub |
+            #!/bin/bash
+            echo "Hello, World!" > /tmp/hello.txt
+
+  TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       Port: 80
       Protocol: HTTP
-      VpcId: vpc-0b92707bcabd82204
-        
+      VpcId: vpc-0b92707bcabd82204  # Replace with your VPC ID
+
 Outputs:
   CloudWatchLogGroup:
     Description: "CloudWatch Log Group Name"
@@ -62,8 +63,7 @@ Outputs:
   DynamoDBTableName:
     Description: "DynamoDB Table Name"
     Value: !Ref DynamoDBTable
-    
+
   LoadBalancerDNS:
     Description: "Load Balancer DNS Name"
     Value: !GetAtt LoadBalancer.DNSName
-
