@@ -4,8 +4,7 @@ Description: CloudFormation Template for CloudWatch Logs.
 Resources:
   FrontendS3Bucket:
     Type: AWS::S3::Bucket 
-    Name: 223364
-    
+
   # CloudWatch Log Group
   CloudWatchLogGroup:
     Type: AWS::Logs::LogGroup
@@ -34,8 +33,21 @@ Resources:
         - subnet-03c1c466698b3a209
       SecurityGroups:
         - sg-03c89b66ae30cc15b  
-
-  TargetGroup:
+        
+LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: MyLaunchTemplate
+      ImageId: ami-0abcdef1234567890
+      InstanceType: t2.micro
+      SecurityGroupIds:
+        - sg-0123456789abcdef0
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          echo "Hello, World!" > /tmp/hello.txt
+          
+TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       Port: 80
@@ -50,7 +62,7 @@ Outputs:
   DynamoDBTableName:
     Description: "DynamoDB Table Name"
     Value: !Ref DynamoDBTable
-
+    
   LoadBalancerDNS:
     Description: "Load Balancer DNS Name"
     Value: !GetAtt LoadBalancer.DNSName
