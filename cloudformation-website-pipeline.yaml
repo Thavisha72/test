@@ -2,15 +2,16 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: CloudFormation Template for CloudWatch Logs.
 
 Resources:
+  # S3 Bucket
   S3Bucket:
-      Type: AWS:S3:Bucket
+    Type: AWS::S3::Bucket
 
-# EC2 Instance
+  # EC2 Instance
   EC2Instance:
     Type: AWS::EC2::Instance
     Properties:
       InstanceType: t2.micro
-      ImageId: ami-05edb7c94b324f73c # Replace this with the correct AMI ID for your region
+      ImageId: ami-05edb7c94b324f73c  # Replace with the correct AMI ID for your region
       KeyName: bidding  # Replace with your actual key pair name
       SecurityGroups:
         - !Ref EC2SecurityGroup
@@ -18,7 +19,8 @@ Resources:
         - Key: Name
           Value: BiddingEC2Instance
 
-   EC2SecurityGroup:
+  # EC2 Security Group (Fixed indentation)
+  EC2SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Allow HTTP and SSH access
