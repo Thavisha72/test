@@ -1,16 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: CloudFormation Template for CloudWatch Logs.
-
-Parameters:
-  Subnet1:
-    Type: AWS::EC2::Subnet::Id
-    Description: "First public subnet for the Load Balancer"
-  Subnet2:
-    Type: AWS::EC2::Subnet::Id
-    Description: "Second public subnet for the Load Balancer"
-  VPC:
-    Type: AWS::EC2::VPC::Id
-    Description: "VPC ID for the resources"
     
 Resources:
   FrontendS3Bucket:
@@ -41,25 +30,17 @@ LoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       Subnets:
-        - !Ref Subnet1
-        - !Ref Subnet2
+        - subnet-03c1c466698b3a209
       SecurityGroups:
-        - sg-03c89b66ae30cc15b  # Replace with your Security Group ID
+        - sg-03c89b66ae30cc15b  
 
-LaunchTemplate:
-    Type: AWS::EC2::LaunchTemplate
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      LaunchTemplateName: MyLaunchTemplate
-      LaunchTemplateData:
-        ImageId: ami-08b1d20c6a69a7100
-        InstanceType: t2.micro
-        SecurityGroupIds:
-          - sg-03c89b66ae30cc15b
-        UserData:
-          Fn::Base64: !Sub |
-            #!/bin/bash
-            echo "Hello, World!" > /tmp/hello.txt
-
+      Port: 80
+      Protocol: HTTP
+      VpcId: vpc-0b92707bcabd82204
+        
 Outputs:
   CloudWatchLogGroup:
     Description: "CloudWatch Log Group Name"
