@@ -26,6 +26,15 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
 
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Subnets:
+        - subnet-0123456789abcdef0
+        - subnet-0123456789abcdef1
+      SecurityGroups:
+        - sg-0123456789abcdef0
+
 Outputs:
   CloudWatchLogGroup:
     Description: "CloudWatch Log Group Name"
@@ -34,3 +43,8 @@ Outputs:
   DynamoDBTableName:
     Description: "DynamoDB Table Name"
     Value: !Ref DynamoDBTable
+
+  LoadBalancerDNS:
+    Description: "Load Balancer DNS Name"
+    Value: !GetAtt LoadBalancer.DNSName
+
