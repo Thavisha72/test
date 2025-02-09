@@ -30,10 +30,19 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       Subnets:
-        - subnet-0123456789abcdef0
-        - subnet-0123456789abcdef1
+        - subnet-092d0d335b3d7ad0a
+        - subnet-03c1c466698b3a209
       SecurityGroups:
-        - sg-0123456789abcdef0
+        - sg-034e400f8416cda71
+
+  LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: MyLaunchTemplate
+      ImageId: ami-05edb7c94b324f73c
+      InstanceType: t2.micro
+      SecurityGroupIds:
+        - - sg-034e400f8416cda71
 
 Outputs:
   CloudWatchLogGroup:
