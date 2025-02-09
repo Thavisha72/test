@@ -2,9 +2,12 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: CloudFormation Template for CloudWatch Logs.
 
 Resources:
-  # S3 Bucket
-  S3Bucket:
+FrontendS3Bucket:
     Type: AWS::S3::Bucket
+    Properties:
+      BucketName: my-library-frontend-bucket-sheshan-hebron
+      WebsiteConfiguration:
+        IndexDocument: index.html
 
   # CloudWatch Log Group
   CloudWatchLogGroup:
