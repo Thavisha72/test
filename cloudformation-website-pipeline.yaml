@@ -19,7 +19,7 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
 
-   MyEC2Instance:
+  MyEC2Instance:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: ami-05edb7c94b324f73c # Replace with a valid AMI ID for your region
