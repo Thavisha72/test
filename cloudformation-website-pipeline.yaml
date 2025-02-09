@@ -44,17 +44,17 @@ LoadBalancer:
         - !Ref Subnet1
         - !Ref Subnet2
       SecurityGroups:
-        - sg-05c57339da8f3f6b8  # Replace with your Security Group ID
+        - sg-03c89b66ae30cc15b  # Replace with your Security Group ID
 
   LaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
     Properties:
       LaunchTemplateName: MyLaunchTemplate
       LaunchTemplateData:
-        ImageId: ami-05edb7c94b324f73c  
+        ImageId: ami-08b1d20c6a69a7100
         InstanceType: t2.micro
         SecurityGroupIds:
-          - sg-05c57339da8f3f6b8 
+          - sg-03c89b66ae30cc15b
         UserData:
           Fn::Base64: !Sub |
             #!/bin/bash
