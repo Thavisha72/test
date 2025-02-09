@@ -19,17 +19,37 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
 
-  MyEC2Instance:
-    Type: AWS::EC2::Instance
+  MyLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
     Properties:
-      ImageId: ami-05edb7c94b324f73c # Replace with a valid AMI ID for your region
-      InstanceType: t3.micro          # Replace with your desired instance type
-      SecurityGroupIds:
-        - sg-002f5a2e1c10ce54a        # Replace with your Security Group ID
-      KeyName: bidding              # Replace with your EC2 key pair name
-      Tags:
-        - Key: Name
-          Value: MyEC2Instance
+      LaunchTemplateName: MyLaunchTemplate
+      LaunchTemplateData:
+        ImageId: ami-05edb7c94b324f73c  # Replace with a valid AMI ID for your region
+        InstanceType: t3.micro          # Replace with your desired instance type
+        SecurityGroupIds:
+          - sg-002f5a2e1c10ce54a        # Replace with your Security Group ID
+        KeyName: bidding                # Replace with your EC2 key pair name
+        UserData:
+          Fn::Base64: !Sub |
+            #!/bin/bash
+            echo "Hello, World!" > /tmp/hello.txt
+
+  # Auto Scaling Group
+  MyAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MyLaunchTemplate
+        Version: !GetAtt MyLaunchTemplate.LatestVersionNumber
+      MinSize: 1
+      MaxSize: 3
+      DesiredCapacity: 2
+      VPCZoneIdentifier:
+        - subnet-092d0d335b3d7ad0a  # Replace with your Subnet ID
+        - subnet-03c1c466698b3a209  # Replace with another Subnet ID
+      TargetGroupARNs:
+        - !Ref MyTargetGroup
+
 
    # Load Balancer
   MyLoadBalancer:
@@ -53,9 +73,7 @@ Resources:
       HealthCheckPath: /            # Health check path
       HealthCheckPort: 80           # Health check port
       HealthCheckProtocol: HTTP     # Health check protocol
-      Targets:
-        - Id: !Ref MyEC2Instance  
-    
+      
   # CloudWatch Log Group
   CloudWatchLogGroup:
     Type: AWS::Logs::LogGroup
