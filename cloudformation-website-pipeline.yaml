@@ -46,7 +46,7 @@ LoadBalancer:
       SecurityGroups:
         - sg-03c89b66ae30cc15b  # Replace with your Security Group ID
 
-  LaunchTemplate:
+LaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
     Properties:
       LaunchTemplateName: MyLaunchTemplate
