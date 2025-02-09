@@ -6,34 +6,6 @@ Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
 
-  # EC2 Instance
-  EC2Instance:
-    Type: AWS::EC2::Instance
-    Properties:
-      InstanceType: t2.micro
-      ImageId: ami-05edb7c94b324f73c  # Replace with the correct AMI ID for your region
-      KeyName: bidding  # Replace with your actual key pair name
-      SecurityGroups:
-        - !Ref EC2SecurityGroup
-      Tags:
-        - Key: Name
-          Value: BiddingEC2Instance
-
-  # EC2 Security Group (Fixed indentation)
-  EC2SecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Allow HTTP and SSH access
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 22
-          ToPort: 22
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 0.0.0.0/0
-
   # CloudWatch Log Group
   CloudWatchLogGroup:
     Type: AWS::Logs::LogGroup
