@@ -18,6 +18,18 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
+
+   MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-05edb7c94b324f73c # Replace with a valid AMI ID for your region
+      InstanceType: t3.micro          # Replace with your desired instance type
+      SecurityGroupIds:
+        - sg-002f5a2e1c10ce54a        # Replace with your Security Group ID
+      KeyName: bidding              # Replace with your EC2 key pair name
+      Tags:
+        - Key: Name
+          Value: MyEC2Instance
     
   # CloudWatch Log Group
   CloudWatchLogGroup:
