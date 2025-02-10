@@ -73,6 +73,14 @@ Resources:
       HealthCheckPath: /            # Health check path
       HealthCheckPort: 80           # Health check port
       HealthCheckProtocol: HTTP     # Health check protocol
+
+
+   # Kinesis Data Stream for Real-Time Analytics
+  MyKinesisStream:
+    Type: AWS::Kinesis::Stream
+    Properties:
+      Name: MyKinesisStream
+      ShardCount: 1
       
   # CloudWatch Log Group
   CloudWatchLogGroup:
