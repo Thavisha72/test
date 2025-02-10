@@ -149,7 +149,7 @@ Resources:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
-                Resource: "*"
+               
 
   # Kinesis Event Source Mapping for Lambda
   MyKinesisEventSource:
