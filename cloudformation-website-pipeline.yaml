@@ -50,6 +50,50 @@ Resources:
       TargetGroupARNs:
         - !Ref MyTargetGroup
 
+  
+  # IAM Role for Lambda
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: KinesisAccessPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - kinesis:GetRecords
+                  - kinesis:GetShardIterator
+                  - kinesis:DescribeStream
+                  - kinesis:ListStreams
+                Resource: !GetAtt MyKinesisStream.Arn
+        - PolicyName: CloudWatchLogsAccessPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+
+  # Kinesis Event Source Mapping for Lambda
+  MyKinesisEventSource:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      EventSourceArn: !GetAtt MyKinesisStream.Arn
+      FunctionName: !GetAtt MyLambdaFunction.Arn
+      StartingPosition: LATEST
+
+
 
    # Load Balancer
   MyLoadBalancer:
@@ -81,6 +125,24 @@ Resources:
     Properties:
       Name: MyKinesisStream
       ShardCount: 1
+
+  MyLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+
+          def handler(event, context):
+              for record in event['Records']:
+                  payload = json.loads(record['kinesis']['data'])
+                  print("Processed record:", payload)
+      Runtime: python3.9
+      Timeout: 10
+      
       
   # CloudWatch Log Group
   CloudWatchLogGroup:
