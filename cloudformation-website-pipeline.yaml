@@ -119,7 +119,7 @@ Resources:
 
   # IAM Role for Lambda
   LambdaExecutionRole:
-    Type: AWS::IAM::Role
+    Type: AWS::IAM::Policy
     Properties:
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
