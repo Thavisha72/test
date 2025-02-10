@@ -1,10 +1,12 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: CloudFormation Template for CloudWatch Logs.
+Description: CloudFormation Template for CloudWatch Logs, DynamoDB, EC2, Load Balancer, and Auto Scaling.
 
 Resources:
+ #S3 bucket creation 
   FrontendS3Bucket:
     Type: AWS::S3::Bucket
-
+    
+# Dynamo db 
   DynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -24,11 +26,11 @@ Resources:
     Properties:
       LaunchTemplateName: MyLaunchTemplate
       LaunchTemplateData:
-        ImageId: ami-05edb7c94b324f73c  # Replace with a valid AMI ID for your region
-        InstanceType: t3.micro          # Replace with your desired instance type
+        ImageId: ami-05edb7c94b324f73c 
+        InstanceType: t3.micro          
         SecurityGroupIds:
-          - sg-002f5a2e1c10ce54a        # Replace with your Security Group ID
-        KeyName: bidding                # Replace with your EC2 key pair name
+          - sg-002f5a2e1c10ce54a        
+        KeyName: bidding               
         UserData:
           Fn::Base64: !Sub |
             #!/bin/bash
@@ -45,88 +47,22 @@ Resources:
       MaxSize: 3
       DesiredCapacity: 2
       VPCZoneIdentifier:
-        - subnet-092d0d335b3d7ad0a  # Replace with your Subnet ID
-        - subnet-03c1c466698b3a209  # Replace with another Subnet ID
+        - subnet-092d0d335b3d7ad0a  
+        - subnet-03c1c466698b3a209  
       TargetGroupARNs:
         - !Ref MyTargetGroup
-        
-    # Kinesis Data Stream for Real-Time Analytics
-  MyRealtimeAnalyticsStream:
-    Type: AWS::Kinesis::Stream
-    Properties:
-      Name: MyKinesisStream
-      ShardCount: 1
-  
-  # IAM Role for Lambda
-  LambdaExecutionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-            Action: sts:AssumeRole
-      Policies:
-        - PolicyName: KinesisAccessPolicy
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - kinesis:GetRecords
-                  - kinesis:GetShardIterator
-                  - kinesis:DescribeStream
-                  - kinesis:ListStreams
-                Resource: !GetAtt MyRealtimeAnalyticsStream.Arn
-        - PolicyName: CloudWatchLogsAccessPolicy
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                Resource: "*"
-
-  # Kinesis Event Source Mapping for Lambda
-  MyKinesisEventSource:
-    Type: AWS::Lambda::EventSourceMapping
-    Properties:
-      EventSourceArn: !GetAtt MyRealtimeAnalyticsStream.Arn
-      FunctionName: !GetAtt MyLambdaFunction.Arn
-      StartingPosition: LATEST
-
-  MyLambdaFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Handler: index.handler
-      Role: !GetAtt LambdaExecutionRole.Arn
-      Code:
-        ZipFile: |
-          import json
-          import boto3
-
-          def handler(event, context):
-              for record in event['Records']:
-                  payload = json.loads(record['kinesis']['data'])
-                  print("Processed record:", payload)
-      Runtime: python3.9
-      Timeout: 10
 
    # Load Balancer
   MyLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       Subnets:
-        - subnet-092d0d335b3d7ad0a  # Replace with your Subnet ID
-        - subnet-03c1c466698b3a209  # Replace with another Subnet ID
+        - subnet-092d0d335b3d7ad0a  
+        - subnet-03c1c466698b3a209 
       SecurityGroups:
-        - sg-002f5a2e1c10ce54a      # Replace with your Security Group ID
-      Scheme: internet-facing       # Use 'internal' for an internal load balancer
-      Type: application             # Use 'network' for a Network Load Balancer
+        - sg-002f5a2e1c10ce54a     
+      Scheme: internet-facing       
+      Type: application            
 
   # Target Group
   MyTargetGroup:
@@ -134,11 +70,11 @@ Resources:
     Properties:
       Port: 80
       Protocol: HTTP
-      VpcId: vpc-0b92707bcabd82204 # Replace with your VPC ID
-      HealthCheckPath: /            # Health check path
-      HealthCheckPort: 80           # Health check port
-      HealthCheckProtocol: HTTP     # Health check protocol
-
+      VpcId: vpc-0b92707bcabd82204
+      HealthCheckPath: /          
+      HealthCheckPort: 80           
+      HealthCheckProtocol: HTTP     
+      
   # CloudWatch Log Group
   CloudWatchLogGroup:
     Type: AWS::Logs::LogGroup
@@ -146,12 +82,20 @@ Resources:
       LogGroupName: /the_app/logs
       RetentionInDays: 30
 Outputs:
+#cloudwatchlog output
   CloudWatchLogGroup:
     Description: "CloudWatch Log Group Name"
     Value: !Ref CloudWatchLogGroup
-#dynamodb comment
+#dynamodb output
   DynamoDBTableName:
     Description: "DynamoDB Table Name"
     Value: !Ref DynamoDBTable
-
-
+    
+#Load Balancer Output
+  LoadBalancerDNS:
+    Description: "Load Balancer DNS Name"
+    Value: !GetAtt MyLoadBalancer.DNSName
+#Auto Scaling Output
+  AutoScalingGroupName:
+    Description: "Auto Scaling Group Name"
+    Value: !Ref MyAutoScalingGroup
