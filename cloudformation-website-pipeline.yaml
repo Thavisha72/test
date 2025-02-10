@@ -32,11 +32,11 @@ Resources:
     Properties:
       LaunchTemplateName: MyLaunchTemplate
       LaunchTemplateData:
-        ImageId: ami-05edb7c94b324f73c  # Replace with a valid AMI ID for your region
-        InstanceType: t3.micro          # Replace with your desired instance type
+        ImageId: ami-05edb7c94b324f73c  
+        InstanceType: t3.micro         
         SecurityGroupIds:
-          - sg-002f5a2e1c10ce54a        # Replace with your Security Group ID
-        KeyName: bidding                # Replace with your EC2 key pair name
+          - sg-002f5a2e1c10ce54a        
+        KeyName: bidding               
         UserData:
           Fn::Base64: !Sub |
             #!/bin/bash
@@ -91,74 +91,7 @@ Resources:
       DefaultActions:
         - Type: forward
           TargetGroupArn: !Ref MyTargetGroup
-
-  # Kinesis Data Stream for Real-Time Analytics
-  MyKinesisStream:
-    Type: AWS::Kinesis::Stream
-    Properties:
-      Name: MyKinesisStream
-      ShardCount: 1  # Adjust based on your data volume
-
-  # Lambda Function for Real-Time Data Processing
-  MyLambdaFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      Handler: index.handler
-      Role: !GetAtt LambdaExecutionRole.Arn
-      Code:
-        ZipFile: |
-          import json
-          import boto3
-
-          def handler(event, context):
-              for record in event['Records']:
-                  payload = json.loads(record['kinesis']['data'])
-                  print("Processed record:", payload)
-      Runtime: python3.9
-      Timeout: 10
-
-  # IAM Role for Lambda
-  LambdaExecutionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-            Action: sts:AssumeRole
-      Policies:
-        - PolicyName: KinesisAccessPolicy
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - kinesis:GetRecords
-                  - kinesis:GetShardIterator
-                  - kinesis:DescribeStream
-                  - kinesis:ListStreams
-                Resource: !GetAtt MyKinesisStream.Arn
-        - PolicyName: CloudWatchLogsAccessPolicy
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-               
-
-  # Kinesis Event Source Mapping for Lambda
-  MyKinesisEventSource:
-    Type: AWS::Lambda::EventSourceMapping
-    Properties:
-      EventSourceArn: !GetAtt MyKinesisStream.Arn
-      FunctionName: !GetAtt MyLambdaFunction.Arn
-      StartingPosition: LATEST
-
+             
 Outputs:
   CloudWatchLogGroup:
     Description: "CloudWatch Log Group Name"
